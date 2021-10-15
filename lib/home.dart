@@ -1,4 +1,8 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -8,8 +12,44 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  List _listaTarefas = ['tarefa 1', 'tarefa 2'];
+  List _listaTarefas = [];
 
+  Future<File> _getFile() async {
+    final dir = await getApplicationDocumentsDirectory();
+    return File("${dir.path}/listaTrefas.json");
+  }
+
+  _salvaArquivo() async {
+    var arquivo = await _getFile();
+    Map<String, dynamic> tarefa = Map();
+    tarefa['titulo'] = 'titulo';
+    tarefa['status'] = 'realizada';
+    _listaTarefas.add(tarefa);
+    String dados = json.encode(_listaTarefas);
+    arquivo.writeAsString(dados);
+  }
+
+  _lerArquivo() async {
+
+    try{
+      var arquivo = await _getFile();
+      return arquivo.readAsString();
+
+    }catch(e){
+      return null;
+    }
+  }
+
+  @override
+  void initState() {
+    _lerArquivo().then((dados){
+      setState(() {
+        _listaTarefas = json.decode(dados);
+      });
+    });
+    super.initState();
+
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,7 +64,7 @@ class _HomeState extends State<Home> {
                 itemCount: _listaTarefas.length,
                 itemBuilder: (context, index) {
                   return ListTile(
-                    title: Text(_listaTarefas[index]),
+                    title: Text(_listaTarefas[index]['titulo']),
                   );
                 }),
           )
@@ -51,6 +91,7 @@ class _HomeState extends State<Home> {
                         child: Text('Cancelar')),
                     TextButton(
                         onPressed: () {
+                          _salvaArquivo();
                           Navigator.pop(context);
                         },
                         child: Text('Salvar')),
