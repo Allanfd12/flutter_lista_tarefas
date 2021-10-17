@@ -1,6 +1,6 @@
 # flutter_lista_tarefas
 
-A new Flutter application.
+Cria uma lista de tarefas que será salva no sistema atravez de um arquivo Json
 
 ## Getting Started
 
