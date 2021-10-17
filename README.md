@@ -1,6 +1,7 @@
 # flutter_lista_tarefas
 
 Cria uma lista de tarefas que será salva no sistema atravez de um arquivo Json
+![WhatsApp Image 2021-10-17 at 14 02 46](https://user-images.githubusercontent.com/75325265/137637453-588fc8d0-6106-4e0b-933c-4873f5f1ac29.jpeg)
 
 ## Getting Started
 
