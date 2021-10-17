@@ -58,6 +58,56 @@ class _HomeState extends State<Home> {
     super.initState();
   }
 
+  Widget criarItemLista(context, index) {
+
+    return Dismissible(
+      direction: DismissDirection.endToStart,
+      background: Container(
+        color: Colors.red,
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: const [
+            Icon(
+              Icons.delete,
+              color: Colors.white,
+            )
+          ],
+        ),
+      ),
+      onDismissed: (direction) {
+
+
+        Map<String, dynamic> tarefa = Map();
+        tarefa['titulo'] = _listaTarefas[index]['titulo'];
+        tarefa['realizada'] = _listaTarefas[index]['realizada'];
+        _listaTarefas.removeAt(index);
+        _salvaArquivo();
+        ScaffoldMessenger.of(context).showSnackBar( SnackBar(
+            content: const Text("Tarefa Removida"),
+            action: SnackBarAction(label: "Desfazer", onPressed: () {
+              setState(() {
+                _listaTarefas.add(tarefa);
+              });
+              _salvaArquivo();
+
+            },)
+        ));
+
+      },
+      key: Key(DateTime.now().microsecondsSinceEpoch.toString()),
+      child: CheckboxListTile(
+          title: Text(_listaTarefas[index]['titulo']),
+          value: _listaTarefas[index]['realizada'],
+          onChanged: (valor) {
+            setState(() {
+              _listaTarefas[index]['realizada'] = valor;
+            });
+            _salvaArquivo();
+          }),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -69,21 +119,7 @@ class _HomeState extends State<Home> {
         children: [
           Expanded(
             child: ListView.builder(
-                itemCount: _listaTarefas.length,
-                itemBuilder: (context, index) {
-                  // return ListTile(
-                  //   title: Text(_listaTarefas[index]['titulo']),
-                  // );
-                  return CheckboxListTile(
-                      title: Text(_listaTarefas[index]['titulo']),
-                      value: _listaTarefas[index]['realizada'],
-                      onChanged: (valor) {
-                        setState(() {
-                          _listaTarefas[index]['realizada'] = valor;
-                        });
-                        _salvaArquivo();
-                      });
-                }),
+                itemCount: _listaTarefas.length, itemBuilder: criarItemLista),
           )
         ],
       ),
